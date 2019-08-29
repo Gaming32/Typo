@@ -1,0 +1,20 @@
+{
+    "dependencies": 
+    [
+        "random"
+    ],
+    "functions":
+    {
+        "randint":
+        {
+            "module" : "random",
+            "function" : "randint",
+            "minargcount" : 2
+        },
+        "random":{
+            "module" : "random",
+            "function" : "random",
+            "minargcount" : 0
+        }
+    }
+}
