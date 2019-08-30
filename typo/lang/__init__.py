@@ -18,5 +18,5 @@ def run_script(path):
     for line in file:
         tkn.reset(line)
         tkn.scan()
-        prs.run()
+        if not tkn.nextline: prs.run()
     return tkn, prs
