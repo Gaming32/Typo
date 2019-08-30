@@ -6,6 +6,6 @@ def withargs(*args):
     print(*args)
     print('vars are', register_import.vars)
     print('funcs are', register_import.funcs)
-register_import.register('somefunc', something, 0)
-register_import.register('print', withargs, 0, 1000)
+register_import.register_func('somefunc', something, 0)
+register_import.register_func('print', withargs, 0, 1000)
 register_import.register_var('name', 'value')

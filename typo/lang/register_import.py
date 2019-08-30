@@ -1,6 +1,6 @@
 funcs = {}
 vars = {}
-def register(name, func, minargcount, maxargcount=None, *defaults):
+def register_func(name, func, minargcount, maxargcount=None, *defaults):
     funcs[name] = dict(
         func=func,
         minargcount=minargcount,

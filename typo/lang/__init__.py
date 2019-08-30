@@ -20,3 +20,15 @@ def run_script(path):
         tkn.scan()
         if not tkn.nextline: prs.run()
     return tkn, prs
+def run_line(line, vars={}, funcs={}):
+    return Parse(TokenGet(line).scan(), vars, funcs).run()
+def run_lines(lines, vars={}, funcs={}):
+    tkn = TokenGet()
+    prs = Parse(tkn)
+    for line in lines.splitlines():
+        tkn.reset(line)
+        tkn.scan()
+        if not tkn.nextline: prs.run()
+    vars.update(prs.vars)
+    funcs.update(prs.funcs)
+    return tkn, prs

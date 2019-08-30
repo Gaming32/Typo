@@ -1,8 +1,9 @@
 import sys, os
-try: from .__init__ import typo_error, verbose
+try: from .__init__ import typo_error, verbose, run_line, run_lines
 except ImportError: pass
 from . import __init__
 from .token import TokenGet
+from .types import *
 from ._import import *
 import string
 
@@ -15,18 +16,19 @@ def _parse_equation(equ, key):
     return eval(equ)
 
 class Parse:
-    def __init__(self, tokener:TokenGet):
+    def __init__(self, tokener:TokenGet, vars={}, funcs={}):
         self.tokener = tokener
         self.assigner = None
         self.cmd = None
         self.args = None
-        self.funcs = {}
-        self.vars = {}
+        self.funcs = funcs
+        self.vars = vars
         self.modsearchlist = import_dirs[:] + [os.path.dirname(sys.argv[1])]
 
         for (i, arg) in enumerate(sys.argv[1:]):
             self.vars['arg%i'%i] = arg
         self.vars['argcount'] = str(len(sys.argv[1:]))
+        self.returnval = None
     def startrun(self):
         if isinstance(self.cmd, tuple) and self.cmd[0] == 'varassign':
             self.assigner = self.cmd[1]
@@ -50,6 +52,7 @@ class Parse:
         if self.assigner is not None:
             self.vars[self.assigner] = val
             self.assigner = None
+        self.returnval = val
     def run(self):
         verbose('raw command is', self.tokener.cmd)
         try: self.cmd, *self.args = self.tokener.cmd
@@ -81,6 +84,17 @@ class Parse:
                 else: cur = var
             val = _parse_equation(self.args[0], dict(key))
             self.return_(val)
+        elif self.cmd =='?' or self.cmd == 'if':
+            self.check_argcount(2, 3, '')
+            logic = run_line(self.args[0], self.vars, self.funcs)
+            if logic: run_lines(self.args[1])
+            else: run_lines(self.args[2])
+        elif self.cmd == 'logic':
+            self.check_argcount(1)
+            self.return_(Bool(self.args[1]))
+        elif self.cmd == 'has':
+            self.check_argcount(2)
+            self.return_(Bool(self.args[0] in self.args[1]))
         elif self.cmd == 'assignment':
             self.check_argcount(2)
             self.vars[self.args[0]] = self.args[1]
@@ -99,6 +113,7 @@ class Parse:
                 register_import.vars = {}
                 if ret is not None: self.return_(ret)
             else: raise parse_error('invalid cmd %s' % self.cmd)
+        return self.returnval
 
 from . import _import
 _import.TokenGet = TokenGet

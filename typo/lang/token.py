@@ -97,6 +97,7 @@ class TokenGet:
                     self.data += char
                     self.invar = 1
             else: raise token_error
+            return self
 
 if __name__ == '__main__':
     import sys
