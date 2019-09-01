@@ -1,4 +1,4 @@
-try: from .__init__ import typo_error, verbose
+try: from ._core import typo_error, verbose
 except ImportError: pass
 import string
 class token_error(typo_error): name = 'SyntaxError'
@@ -97,7 +97,7 @@ class TokenGet:
                     self.data += char
                     self.invar = 1
             else: raise token_error
-            return self
+        return self
 
 if __name__ == '__main__':
     import sys

@@ -1,5 +1,5 @@
 import sys, os
-try: from .__init__ import typo_error, verbose, run_line, run_lines
+try: from ._core import typo_error, verbose, run_line, run_lines
 except ImportError: pass
 from . import __init__
 from .token import TokenGet
@@ -27,7 +27,7 @@ class Parse:
 
         for (i, arg) in enumerate(sys.argv[1:]):
             self.vars['arg%i'%i] = arg
-        self.vars['argcount'] = str(len(sys.argv[1:]))
+        self.vars['argcount'] = float(len(sys.argv[1:]))
         self.returnval = None
     def startrun(self):
         if isinstance(self.cmd, tuple) and self.cmd[0] == 'varassign':
@@ -86,12 +86,11 @@ class Parse:
             self.return_(val)
         elif self.cmd =='?' or self.cmd == 'if':
             self.check_argcount(2, 3, '')
-            logic = run_line(self.args[0], self.vars, self.funcs)
-            if logic: run_lines(self.args[1])
+            if self.args[0]: run_lines(self.args[1])
             else: run_lines(self.args[2])
         elif self.cmd == 'logic':
             self.check_argcount(1)
-            self.return_(Bool(self.args[1]))
+            self.return_(Bool(self.args[0]))
         elif self.cmd == 'has':
             self.check_argcount(2)
             self.return_(Bool(self.args[0] in self.args[1]))

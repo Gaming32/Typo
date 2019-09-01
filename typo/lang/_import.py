@@ -1,6 +1,5 @@
 import sys, os
-from .__init__ import verbose
-from . import __init__
+from ._core import verbose, run_script
 import mimetypes, json
 mimetypes.add_type('text/python', '.py')
 mimetypes.add_type('text/typo-script', '.typ')
@@ -11,10 +10,6 @@ _pkgdir =  '/'.join(__file__.split(os.sep)[:-3])
 import_dirs = ['.', _pkgdir+'/modules']
 
 def import_typ(self, file):
-    if not hasattr(__init__, 'TokenGet'):
-        __init__.TokenGet = TokenGet
-    if not hasattr(__init__, 'Parse'):
-        __init__.Parse = Parse
     tkn, prs = __init__.run_script(file)
     verbose('successfully imported', prs.vars, 'from', file)
     self.vars.update(prs.vars)
