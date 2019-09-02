@@ -5,11 +5,25 @@ from . import __init__
 from .token import TokenGet
 from .types import *
 from ._import import *
-import string
+import string, math
 
 class parse_error(typo_error): name = 'CommandError'
 
-def _parse_equation(equ, key):
+def _convert_rot_mod(rotmod, x):
+    if rotmod: return x
+    else: return math.radians(x)
+def _parse_equation(equ, rotmod, **key):
+    #define functions
+    trunc = math.trunc
+    ceil = math.ceil
+    floor = math.floor
+    rad = math.radians
+    deg = math.degrees
+    sin = lambda x: math.sin(_convert_rot_mod(rotmod, x))
+    cos = lambda x: math.cos(_convert_rot_mod(rotmod, x))
+    tan = lambda x: math.tan(_convert_rot_mod(rotmod, x))
+    arc = lambda x: math.atan(_convert_rot_mod(rotmod, x))
+    #run equation
     equ = equ.replace('^', '**')
     for (name, replace) in key.items():
         equ = equ.replace(name, repr(replace))
@@ -29,6 +43,8 @@ class Parse:
             self.vars['arg%i'%i] = arg
         self.vars['argcount'] = float(len(sys.argv[1:]))
         self.returnval = None
+
+        self.math_rotmod = True
     def startrun(self):
         if isinstance(self.cmd, tuple) and self.cmd[0] == 'varassign':
             self.assigner = self.cmd[1]
@@ -82,8 +98,17 @@ class Parse:
                     key.append((cur, var))
                     cur = None
                 else: cur = var
-            val = _parse_equation(self.args[0], dict(key))
+            val = _parse_equation(self.args[0], self.math_rotmod, **dict(key))
             self.return_(val)
+        elif self.cmd == 'math setrotmod':
+            self.check_argcount(1)
+            if not isinstance(self.args[0], str):
+                self.math_rotmod = bool(self.args[0])
+            elif self.args[0][:3] == 'deg':
+                self.math_rotmod = False
+            elif self.args[0][:3] == 'rad':
+                self.math_rotmod = True
+            else: raise parse_error('invalid math rotation unit %s' % self.args[0])
         elif self.cmd =='?' or self.cmd == 'if':
             self.check_argcount(2, 3, '')
             if self.args[0]: run_lines(self.args[1])

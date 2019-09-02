@@ -1,12 +1,21 @@
+import sys
+# import traceback
+# def _excepthook(exctype, value, tb):
+#     verbose('Python exception was:')
+#     verbose('\t'+traceback.format_exc().replace('\n', '\n\t'))
+# def set_excepthook(): sys.excepthook = _excepthook
 class typo_error(Exception):
     "Common base class for all Typo Script exceptions"
     name = 'Error'
 class unknown_error(typo_error): name = 'UnknownError'
-import sys
-if '-v' in sys.argv:
-    verbose = print
-else:
-    verbose = (lambda *p, **k: None)
+_verbose = (lambda *p, **k: None)
+def set_verbose(do_verbose_log):
+    global _verbose
+    if do_verbose_log:
+        _verbose = print
+    else:
+        _verbose = (lambda *p, **k: None)
+verbose = (lambda *p, **k: _verbose(*p, **k))
 def run_script(path):
     file = open(path)
     tkn = TokenGet()

@@ -1,5 +1,9 @@
-num1=|4|
-num2=|6.5|
-num3=[math]{"y*x"&"x"&num1&"y"&num2}
-[out]{num3}
+num1=[math]{"sin(90)"}
+[out]{num1}
+[out]{"\n"}
+
+[math setrotmod]{"deg"}
+
+num2=[math]{"sin(90)"}
+[out]{num2}
 [out]{"\n"}
