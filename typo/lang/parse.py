@@ -14,6 +14,7 @@ def _convert_rot_mod(rotmod, x):
     else: return math.radians(x)
 def _parse_equation(equ, rotmod, **key):
     #define functions
+    sqrt = math.sqrt
     trunc = math.trunc
     ceil = math.ceil
     floor = math.floor

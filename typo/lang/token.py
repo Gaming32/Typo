@@ -1,5 +1,6 @@
-try: from ._core import typo_error, verbose
-except ImportError: pass
+# try: from ._core import typo_error, verbose
+# except ImportError: pass
+from ._core import typo_error, verbose
 import string
 class token_error(typo_error): name = 'SyntaxError'
 
@@ -98,14 +99,3 @@ class TokenGet:
                     self.invar = 1
             else: raise token_error
         return self
-
-if __name__ == '__main__':
-    import sys
-    import typo.lang.parse
-    file = open(sys.argv[1])
-    tkn = TokenGet()
-    prs = typo.lang.parse.Parse(tkn)
-    for line in file:
-        tkn.reset(line)
-        tkn.scan()
-        prs.run()

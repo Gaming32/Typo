@@ -1,9 +1,14 @@
 import sys
-# import traceback
-# def _excepthook(exctype, value, tb):
-#     verbose('Python exception was:')
-#     verbose('\t'+traceback.format_exc().replace('\n', '\n\t'))
-# def set_excepthook(): sys.excepthook = _excepthook
+traceback = None
+def _excepthook(exctype, value, tb):
+    print('temp notification')
+    verbose('Python exception was:')
+    verbose('\t'+traceback.format_exc().replace('\n', '\n\t'))
+def set_excepthook():
+    global traceback
+    # __import__('pprint').pprint(list(sys.modules))
+    import traceback
+    sys.excepthook = _excepthook
 class typo_error(Exception):
     "Common base class for all Typo Script exceptions"
     name = 'Error'
