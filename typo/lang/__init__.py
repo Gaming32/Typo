@@ -1,4 +1,4 @@
-from .token import TokenGet
+from .token_ import TokenGet
 from .parse import Parse
 from ._core import *
 from . import _core

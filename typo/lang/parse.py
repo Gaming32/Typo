@@ -2,7 +2,7 @@ import sys, os
 try: from ._core import typo_error, verbose, run_line, run_lines
 except ImportError: pass
 from . import __init__
-from .token import TokenGet
+from .token_ import TokenGet
 from .types import *
 from ._import import *
 import string, math
@@ -54,14 +54,15 @@ class Parse:
         for (i, arg) in enumerate(self.args):
             if isinstance(arg, tuple):
                 if arg[0] == 'varget':
-                    self.args[i] = self.vars[arg[1]]
+                    try: self.args[i] = self.vars[arg[1]]
+                    except KeyError: raise parse_error('no variable named "%s"'%arg[1])
                 elif arg[0] == 'num':
                     self.args[i] = float(arg[1])
-                else: raise parse_error('invalid command directive %s' % arg[0])
+                else: raise parse_error('invalid command directive "%s"' % arg[0])
     def check_argcount(self, argcount_min, argcount_max=None, *defs):
         if argcount_max is None: argcount_max = argcount_min
         l = len(self.args)
-        if l < argcount_min or l > argcount_max: raise parse_error('invalid arg count %i for cmd %s' % (len(self.args), self.cmd))
+        if l < argcount_min or l > argcount_max: raise parse_error('invalid arg count "%i" for command "%s"' % (len(self.args), self.cmd))
         else:
             for def_ in defs:
                 self.args.append(def_)
@@ -109,7 +110,7 @@ class Parse:
                 self.math_rotmod = False
             elif self.args[0][:3] == 'rad':
                 self.math_rotmod = True
-            else: raise parse_error('invalid math rotation unit %s' % self.args[0])
+            else: raise parse_error('invalid math rotation unit "%s"' % self.args[0])
         elif self.cmd =='?' or self.cmd == 'if':
             self.check_argcount(2, 3, '')
             if self.args[0]: run_lines(self.args[1])
@@ -137,7 +138,7 @@ class Parse:
                 register_import.funcs = {}
                 register_import.vars = {}
                 if ret is not None: self.return_(ret)
-            else: raise parse_error('invalid cmd %s' % self.cmd)
+            else: raise parse_error('no command named "%s"' % self.cmd)
         return self.returnval
 
 from . import _import
