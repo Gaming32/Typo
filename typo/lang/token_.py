@@ -110,6 +110,6 @@ class TokenGet:
                     self.data += char
                     self.invar = 1
             else: raise token_error('unexpected character "%s"'%char, self.string, self.index)
-        if (not self.nextline) and (self.incmd or self.indat or self.invar or self.instr or self.instresc or self.innum):
+        if (not self.nextline) and (self.incmd or self.indat or self.invar==1 or self.instr or self.instresc or self.innum):
             raise token_error('line terminated unexpectedly', self.string, self.index)
         return self
