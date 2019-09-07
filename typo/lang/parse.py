@@ -40,9 +40,6 @@ class Parse:
         self.vars = vars
         self.modsearchlist = import_dirs[:] + [os.path.dirname(sys.argv[1])]
 
-        for (i, arg) in enumerate(sys.argv[1:]):
-            self.vars['arg%i'%i] = arg
-        self.vars['argcount'] = float(len(sys.argv[1:]))
         self.returnval = None
 
         self.math_rotmod = True

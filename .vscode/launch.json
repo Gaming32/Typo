@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args": ["examples\\typo script\\error.typ"]
+            "args": ["examples\\typo script\\demo.typ", "\nsomething"]
         },
         {
             "name": "Python: Current File (Integrated Terminal)",

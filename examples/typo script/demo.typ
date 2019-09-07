@@ -8,6 +8,7 @@ d2=[in]{}
 [out]{d2}
 [out]{"\n"}
 [out]{arg0}
+[out]{arg1}
 # [?]{[has]{"::"&$PATH$}&
 #     [out]{"YES"}&
 # [out]{"NO"}}

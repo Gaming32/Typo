@@ -1,6 +1,6 @@
 import sys
 import traceback
-def _excepthook(exctype, value, tb):
+def print_error(exctype, value, tb):
     # print('temp notification')
     verbose('Python exception was:')
     verbose(''.join(traceback.format_exception(exctype, value, tb)))
@@ -10,7 +10,7 @@ def _excepthook(exctype, value, tb):
     print(exctype.name, ':', value.args[0])
     display = exctype.display(value.args)
     if display is not None: print(display)
-def set_excepthook(): sys.excepthook = _excepthook
+def set_excepthook(): sys.excepthook = print_error
 class typo_error(Exception):
     "Common base class for all Typo Script exceptions"
     name = 'Error'
@@ -25,10 +25,14 @@ def set_verbose(do_verbose_log):
     else:
         _verbose = (lambda *p, **k: None)
 verbose = (lambda *p, **k: _verbose(*p, **k))
-def run_script(path):
+def run_script(path, args=[]):
     file = open(path)
     tkn = TokenGet()
     prs = Parse(tkn)
+    args.insert(0, path)
+    for (i, arg) in enumerate(args):
+        prs.vars['arg%i'%i] = arg
+    prs.vars['argcount'] = len(args)
     for line in file:
         tkn.reset(line)
         tkn.scan()
