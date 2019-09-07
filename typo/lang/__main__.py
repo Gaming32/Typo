@@ -19,4 +19,4 @@ for arg in sys.argv[1:]:
 if d[SCRIPT]:
     run_script(d[SCRIPT], d[SCRIPT_ARGS], '-v' in d[ARGS])
 else:
-    interactive_session()
+    interactive_session('-v' in d[ARGS])
