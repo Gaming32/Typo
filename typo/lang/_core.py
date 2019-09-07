@@ -26,13 +26,14 @@ def set_verbose(do_verbose_log):
         _verbose = (lambda *p, **k: None)
 verbose = (lambda *p, **k: _verbose(*p, **k))
 def run_script(path, args=[]):
-    file = open(path)
-    tkn = TokenGet()
-    prs = Parse(tkn)
+    vars = {}
     args.insert(0, path)
     for (i, arg) in enumerate(args):
-        prs.vars['arg%i'%i] = arg
-    prs.vars['argcount'] = len(args)
+        vars['arg%i'%i] = arg
+    vars['argcount'] = len(args)
+    file = open(path)
+    tkn = TokenGet()
+    prs = Parse(tkn, vars)
     for line in file:
         tkn.reset(line)
         tkn.scan()

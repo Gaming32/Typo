@@ -16,9 +16,10 @@ class token_error(typo_error):
         return string
 
 class TokenGet:
-    def __init__(self, string=''):
+    def __init__(self, string='', outsidevarref=False):
         self.nextline = False
         self.reset(string)
+        self.outsidevarref = outsidevarref
     def reset(self, string):
         string = string.strip()
         self.index = 0
@@ -110,6 +111,8 @@ class TokenGet:
                     self.data += char
                     self.invar = 1
             else: raise token_error('unexpected character "%s"'%char, self.string, self.index)
-        if (not self.nextline) and (self.incmd or self.indat or self.invar==1 or self.instr or self.instresc or self.innum):
+        if (not self.nextline) and (self.incmd or self.indat or
+        (self.invar==1 and self.outsidevarref) or self.instr or
+        self.instresc or self.innum):
             raise token_error('line terminated unexpectedly', self.string, self.index)
         return self

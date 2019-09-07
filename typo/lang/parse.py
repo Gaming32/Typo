@@ -31,14 +31,19 @@ def _parse_equation(equ, rotmod, **key):
     return eval(equ)
 
 class Parse:
-    def __init__(self, tokener:TokenGet, vars={}, funcs={}):
+    def __init__(self, tokener:TokenGet, vars=None, funcs=None):
+        if vars is None: vars = {'argcount':0}
+        if funcs is None: funcs = {}
+
         self.tokener = tokener
         self.assigner = None
         self.cmd = None
         self.args = None
         self.funcs = funcs
         self.vars = vars
-        self.modsearchlist = import_dirs[:] + [os.path.dirname(sys.argv[1])]
+        self.modsearchlist = import_dirs[:]
+        if self.vars['argcount']:
+            self.modsearchlist.extend(self.vars['arg0'])
 
         self.returnval = None
 
@@ -68,9 +73,10 @@ class Parse:
             self.vars[self.assigner] = val
             self.assigner = None
         self.returnval = val
-    def run(self):
-        verbose('raw command is', self.tokener.cmd)
-        try: self.cmd, *self.args = self.tokener.cmd
+    def run(self, *cmd):
+        if not len(cmd): cmd = self.tokener.cmd
+        verbose('raw command is', cmd)
+        try: self.cmd, *self.args = cmd
         except ValueError: return
         verbose('args are', self.args)
         self.startrun()
