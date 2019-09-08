@@ -1,5 +1,6 @@
 import sys
 import traceback
+from ._info import *
 def print_error(exctype, value, tb):
     # print('temp notification')
     verbose('Python exception was:')

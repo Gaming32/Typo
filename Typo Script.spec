@@ -3,10 +3,10 @@
 block_cipher = None
 
 
-a = Analysis(['typo\\lang\\__main__.py'],
-             pathex=['C:\\Users\\josia\\MEGA\\Projects\\Other\\Typo'],
+a = Analysis(['typo/lang/__main__.py'],
+             pathex=['/mnt/c/Users/josia/MEGA/Projects/Other/Typo'],
              binaries=[],
-             datas=[('.\\typo\\lang\\_quits.py', '.\\typo\\lang')],
+             datas=[('./typo/lang/_quits.py', './typo/lang\r')],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],

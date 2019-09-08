@@ -48,6 +48,8 @@ class TokenGet:
                     var = self.cmd[1]
                     self.cmd = []
                     self.cmd.append(('varassign', var))
+                elif self.outsidevarref:
+                    self.cmd.append(('varassign', '__outsidevarref__'))
             elif char == ']' and not self.instr:
                 self.incmd = False
                 self.cmd.append(self.data)
@@ -112,7 +114,10 @@ class TokenGet:
                     self.invar = 1
             else: raise token_error('unexpected character "%s"'%char, self.string, self.index)
         if (not self.nextline) and (self.incmd or self.indat or
-        (self.invar==1 and self.outsidevarref) or self.instr or
+        (self.invar==1 and not self.outsidevarref) or self.instr or
         self.instresc or self.innum):
             raise token_error('line terminated unexpectedly', self.string, self.index)
+        elif self.invar==1 and self.outsidevarref:
+            # self.cmd.append(('varassign', '__outsidevarref__'))
+            self.cmd.extend(['assignment', '__outsidevarref__', ('varget', self.data)])
         return self
