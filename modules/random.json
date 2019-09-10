@@ -15,6 +15,12 @@
             "module" : "random",
             "function" : "random",
             "minargcount" : 0
+        },
+        "randrange":{
+            "module" : "random",
+            "function" : "randrange",
+            "minargcount" : 1,
+            "maxargcount" : 3
         }
     }
 }

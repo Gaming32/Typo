@@ -11,33 +11,43 @@ import_dirs = ['.', _pkgdir+'/modules']
 
 def import_typ(self, file):
     tkn, prs = __init__.run_script(file)
-    verbose('successfully imported', prs.vars, 'from', file)
     self.vars.update(prs.vars)
+    verbose('successfully imported from', file)
+    verbose('\t', 'vars =>', prs.vars)
 def import_py(self, file):
     path = os.path.split(file)
     path = (path[0], os.path.splitext(path[-1])[0])
     sys.path.insert(0, path[0])
-    __import__(path[1])
+    __import__(path[1])._call_typo_func = (lambda *cmd: self.run(*cmd))
     sys.path[:1] = []
     self.funcs.update(register_import.funcs)
     self.vars.update(register_import.vars)
+    verbose('successfully imported from', file)
+    verbose('\t', 'vars  =>', register_import.vars)
+    verbose('\t', 'funcs =>', register_import.funcs)
     register_import.funcs = {}
     register_import.vars = {}
 
 def _import_json_funcs(self, mod):
+    funcs = {}
     for funcname in mod['functions']:
         func = mod['functions'][funcname]
         module = __import__(func['module'])
         del func['module']
         func['func'] = getattr(module, func['function'])
         del func['function']
-        self.funcs[funcname] = func
+        funcs[funcname] = func
+    self.funcs.update(funcs)
+    return funcs
 def _import_json_vars(self, mod):
+    vars = {}
     for varname in mod['vars']:
         var = mod['vars'][varname]
         module = __import__(var['module'])
         value = getattr(module, var['name'])
-        self.vars[varname] = value
+        vars[varname] = value
+    self.vars.update(vars)
+    return vars
 def _import_json_dependencies(self, mod):
     for varname in mod['vars']:
         var = {
@@ -69,9 +79,14 @@ def import_json(self, file):
     }
     mod.update(json.load(open(file)))
     _import_json_dependencies(self, mod)
-    _import_json_funcs(self, mod)
-    _import_json_vars(self, mod)
-    self.vars.update(mod['rawvars'])
+    funcs = _import_json_funcs(self, mod)
+    vars = _import_json_vars(self, mod)
+    rawvars = mod['rawvars']
+    self.vars.update(rawvars)
+    verbose('successfully imported from', file)
+    verbose('\t', 'funcs   =>', funcs)
+    verbose('\t', 'vars    =>', vars)
+    verbose('\t', 'rawvars =>', rawvars)
 
 def import_file(self, file):
     ftype, archived = mimetypes.guess_type(file)

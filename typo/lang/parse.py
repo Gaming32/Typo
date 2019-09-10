@@ -3,7 +3,7 @@ try: from ._core import typo_error, verbose, run_line, run_lines
 except ImportError: pass
 from . import __init__
 from .token_ import TokenGet
-from .types import *
+from .types_ import *
 from ._import import *
 import string, math
 
@@ -43,11 +43,13 @@ class Parse:
         self.vars = vars
         self.modsearchlist = import_dirs[:]
         if self.vars['argcount']:
-            self.modsearchlist.extend(self.vars['arg0'])
+            self.modsearchlist.append(self.vars['arg0'])
 
         self.returnval = None
 
         self.math_rotmod = True
+
+        import_file(self, os.path.join(os.path.dirname(__file__), '_built_in_cmds.py'))
     def startrun(self):
         if isinstance(self.cmd, tuple) and self.cmd[0] == 'varassign':
             self.assigner = self.cmd[1]
