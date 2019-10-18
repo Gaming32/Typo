@@ -13,7 +13,7 @@ EMULATOR_ROOT = os.path.expandvars(EMULATOR_ROOT)
 EMULATOR_ROOT = os.path.expanduser(EMULATOR_ROOT)
 
 def isinstalled():
-    fpath = os.path.join(EMULATOR_ROOT, 'settings.py')
+    fpath = os.path.join(EMULATOR_ROOT, 'settings.json')
     try: fp = open(fpath, 'r')
     except FileNotFoundError:
         return False
