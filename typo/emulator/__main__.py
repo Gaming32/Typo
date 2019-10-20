@@ -9,6 +9,7 @@ def main():
         install()
     os.chdir(os.path.join(EMULATOR_ROOT, 'fsroot'))
     from typo.system import __main__
-    while not __main__.main(): pass
+    while not __main__.main():
+        os.chdir(os.path.join(EMULATOR_ROOT, 'fsroot'))
 
 if __name__ == '__main__': main()

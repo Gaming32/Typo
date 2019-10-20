@@ -1,11 +1,23 @@
 import json, hashlib, os
 from ..python_interaction.modules import typopath
 from ..python_interaction.modules import init
+from ..python_interaction.modules._core import _get
+
+environment = {
+    'PATH': '::sys/exec/shell|::sys/exec/other|::apps',
+    'EXEC_EX': '.sys|.hap'
+}
+calculated_environment = {}
+
+def calculate_environment():
+    for (var, val) in environment.items():
+        calculated_environment[var] = val.split(typopath.pathsep)
 
 def shell(user):
     curdir = ''
     while True:
         path = input('%s> ' % curdir)
+        calculate_environment()
         value = run_file(path)
         if value is not None: break
     if value == 'shutdown':
@@ -17,12 +29,23 @@ def shell(user):
     return 'logout'
 
 def run_file(file):
-    if typopath.splitext(file)[1] == '.sys':
-        return run_sys(file)
+    ex = typopath.splitext(file)[1]
+    if not ex:
+        for ex in calculated_environment['EXEC_EX']:
+            value = run_file(file + ex)
+            if value:
+                return value
+    if ex in calculated_environment['EXEC_EX']:
+        if not typopath.isabs(file):
+            for folder in calculated_environment['PATH']:
+                file = typopath.join(folder, file)
+                if os.path.exists(os.path.join(_get('fsroot'), file)):
+                    break
+        if ex == '.sys':
+            return run_sys(file)
 
 def run_sys(file):
-    if file.startswith('sys/exec'):
-        return os.path.splitext(os.path.basename(file))[0]
+    return os.path.splitext(os.path.basename(file))[0]
 
 def main(settings_file='../settings.json'):
     sf = open(settings_file, 'r+')
@@ -32,6 +55,7 @@ def main(settings_file='../settings.json'):
         if not settings['installed']:
             from .install import install
             curuser = install(settings)
+            sf.seek(0)
             sf.truncate(0)
             json.dump(_settings, sf)
         else:
@@ -40,6 +64,7 @@ def main(settings_file='../settings.json'):
         if exit_command == 'logout': continue
         elif exit_command == 'shutdown': break
         elif exit_command == 'reboot': break
+    sf.seek(0)
     sf.truncate(0)
     json.dump(_settings, sf)
     if exit_command == 'reboot':
@@ -59,7 +84,6 @@ invalid_password_prompt = """
 """[1:-1]
 password_prompt = """
         PASSWORD: 
-
 """[1:-1]
 
 def login_page(users):
