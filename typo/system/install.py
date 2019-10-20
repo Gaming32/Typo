@@ -12,6 +12,7 @@ def install(settings):
     os.mkdir('users'); print('=', end='')
     home = os.path.join('users', username); print('=', end='')
     os.mkdir(home); print('=', end='')
+    settings['installed'] = True; print('=', end='')
     os.chdir(home); print('=', end='')
     print('Done.')
     return username

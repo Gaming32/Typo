@@ -1,5 +1,6 @@
 import json, hashlib, os
 from ..python_interaction.modules import typopath
+from ..python_interaction.modules import init
 
 def shell(user):
     curdir = ''
@@ -16,7 +17,7 @@ def shell(user):
     return 'logout'
 
 def run_file(file):
-    if file.endswith('.sys'):
+    if typopath.splitext(file)[1] == '.sys':
         return run_sys(file)
 
 def run_sys(file):
@@ -31,6 +32,8 @@ def main(settings_file='../settings.json'):
         if not settings['installed']:
             from .install import install
             curuser = install(settings)
+            sf.truncate(0)
+            json.dump(_settings, sf)
         else:
             curuser = login_page(settings['users'])
         exit_command = shell(curuser)
