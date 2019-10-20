@@ -9,6 +9,10 @@ environment = {
 }
 calculated_environment = {}
 
+def print_var(name):
+    if name in environment:
+        print(environment[name])
+
 def calculate_environment():
     for (var, val) in environment.items():
         calculated_environment[var] = val.split(typopath.pathsep)
@@ -16,23 +20,24 @@ def calculate_environment():
 def shell(user):
     curdir = ''
     while True:
-        path = input('%s> ' % curdir)
+        path = input('%s> ' % curdir).split()
         calculate_environment()
-        value = run_file(path)
-        if value is not None: break
-    if value == 'shutdown':
-        return 'shutdown'
-    elif value == 'reboot':
-        return 'reboot'
-    elif value == 'logout':
-        return 'logout'
-    return 'logout'
+        value, args = run_file(path[0], path[1:])
+        # if value is not None: break
+        if value == 'shutdown':
+            return 'shutdown'
+        elif value == 'reboot':
+            return 'reboot'
+        elif value == 'logout':
+            return 'logout'
+        elif value == 'print':
+            print_var(args[0])
 
-def run_file(file):
+def run_file(file, args):
     ex = typopath.splitext(file)[1]
     if not ex:
         for ex in calculated_environment['EXEC_EX']:
-            value = run_file(file + ex)
+            value = run_file(file + ex, args)
             if value:
                 return value
     if ex in calculated_environment['EXEC_EX']:
@@ -42,10 +47,10 @@ def run_file(file):
                 if os.path.exists(os.path.join(_get('fsroot'), file)):
                     break
         if ex == '.sys':
-            return run_sys(file)
+            return run_sys(file, args)
 
-def run_sys(file):
-    return os.path.splitext(os.path.basename(file))[0]
+def run_sys(file, args):
+    return os.path.splitext(os.path.basename(file))[0], args
 
 def main(settings_file='../settings.json'):
     sf = open(settings_file, 'r+')
